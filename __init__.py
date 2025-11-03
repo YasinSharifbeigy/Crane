@@ -1,1 +1,1 @@
-DATASETS_ROOT='/home/alireza/datasets'
+DATASETS_ROOT='/content/drive/MyDrive/Colposcopy/Data/Patient records'
