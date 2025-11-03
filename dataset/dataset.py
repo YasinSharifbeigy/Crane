@@ -148,7 +148,7 @@ class Dataset(data.Dataset):
 		], is_check_shapes=False)
         
         meta_infos = {}
-        dataset_split='test'
+        dataset_split= kwargs.type
         for root in roots:
             with open(f'{root}/meta.json', 'r') as f:
                 meta_info = json.load(f)
