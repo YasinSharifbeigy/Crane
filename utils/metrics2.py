@@ -1,4 +1,4 @@
-from sklearn.metrics import auc, roc_auc_score, average_precision_score, accuracy_score, f1_score, precision_recall_curve, confusion_matrix
+from sklearn.metrics import auc, roc_auc_score, average_precision_score, f1_score, precision_recall_curve
 
 import numpy as np
 from skimage import measure
@@ -37,13 +37,6 @@ def calc_f1_max(gt, pr):
     f1_scores = (2 * precisions * recalls) / (precisions + recalls)
     return np.max(f1_scores[np.isfinite(f1_scores)])
 
-
-def best_f1_threshold(gt, pr):
-    prec, rec, thr = precision_recall_curve(gt, pr)   # thr has len = len(prec)-1
-    f1s = 2 * prec[:-1] * rec[:-1] / (prec[:-1] + rec[:-1] + 1e-12)
-    i = np.nanargmax(f1s)
-    return float(thr[i]), float(f1s[i])
-
 # without warning for division by zero
 # denom = precisions + recalls
 # f1_scores = np.zeros_like(denom)
@@ -59,25 +52,9 @@ def image_level_metrics(results, obj, metric):
     if len(np.unique(gt)) < 2:
         print("only one class present, can not calculate image metrics")
         return 0
-        
-    thr, f1max = best_f1_threshold(gt, pr)
-    print(f"Best threshold={thr:.4f}, F1={f1max:.4f}")
-
-    threshold = thr
-    pr_labels = (pr >= threshold).astype(int)
-    cm = confusion_matrix(gt, pr_labels, labels=[0, 1])
-    # cm layout with labels=[0,1] is:
-    # [[TN, FP],
-    #  [FN, TP]]
-    tn, fp, fn, tp = cm.ravel()
-    print("Confusion Matrix (labels=[0,1], threshold={:.2f}):".format(threshold))
-    print(f"[[TN={tn:>4}, FP={fp:>4}],")
-    print(f" [FN={fn:>4}, TP={tp:>4}]]")
-
+    
     if metric == 'image-auroc':
         performance = roc_auc_score(gt, pr)
-    elif metric == 'image-accuracy':
-        performance = accuracy_score(gt, (pr > 0.5).astype(int))
     elif metric == 'image-ap':
         performance = average_precision_score(gt, pr)
     elif metric == 'image-f1':
