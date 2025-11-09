@@ -143,7 +143,7 @@ def train(args):
                     image_features = F.normalize(image_features, dim=1)
 
                 image_logits = calc_similarity_logits(image_features, text_features, temp=0.01) # batch_size, 1, 768 @ batch_size, 768, 2 or 3
-                ce_img2txt_loss = F.cross_entropy(image_logits, label.long().to(device)) 
+                ce_img2txt_loss = F.cross_entropy(image_logits, label.long().to(device), weight= torch.tensor([1, 999], device=device)/1000) 
                 # txt2img_lbl = torch.stack([(1-label), label], dim=0)/label.sum()
                 # ce_txt2img_loss = F.cross_entropy(image_logits.permute(1, 0), txt2img_lbl.to(device))                                         
 
@@ -151,7 +151,7 @@ def train(args):
                 optimizer.zero_grad()
                 dice_loss *= 2
                 ce_focal_loss *= 2
-                ls = ce_focal_loss+dice_loss+0.2*ce_img2txt_loss
+                ls = ce_img2txt_loss
                 ls.backward() 
                 optimizer.step()
 
