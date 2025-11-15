@@ -21,7 +21,7 @@ run_for_trained_on_mvtec() {
 cur_model_name="${model_name}_crane"
 echo "The name for base version (Crane) is: $cur_model_name"
 
-python train.py --model_name "$cur_model_name" --dataset 'Cropped Folder' --device "$device" --epoch $epoch --features_list 6 12 18 24 --dino_model none --why "Evaluation purpose"
+# python train.py --model_name "$cur_model_name" --dataset 'Cropped Folder' --device "$device" --epoch $epoch --features_list 6 12 18 24 --dino_model none --why "Evaluation purpose"
 #python train.py --model_name "$cur_model_name" --dataset visa  --device "$device" --features_list 6 12 18 24 --dino_model none --why "Evaluation purpose"
 
 base_command="python test.py --devices $device --epoch $epoch --dino_model none --soft_mean True --features_list 6 12 18 24 --visualize False"
